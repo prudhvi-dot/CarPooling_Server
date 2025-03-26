@@ -5,8 +5,6 @@ import userModel from "../models/userModel.js";
 export const offerRide = async (req, res) => {
   try {
     const { uid } = req.user;
-
-    console.log(uid);
     const { from, to, date, time, availableSeats, pricePerSeat, carDetails } =
       req.body;
 
@@ -17,7 +15,9 @@ export const offerRide = async (req, res) => {
       !time ||
       !availableSeats ||
       !pricePerSeat ||
-      !carDetails
+      !carDetails?.model ||
+      !carDetails?.licensePlate ||
+      !carDetails?.color
     ) {
       return res
         .status(400)
@@ -48,6 +48,40 @@ export const offerRide = async (req, res) => {
     console.log(error);
 
     res.status(500).json({ success: false, error: "Server Side Error" });
+  }
+};
+
+export const searchRides = async (req, res) => {
+  try {
+    console.log("Received Query:", req.query);
+
+    let { from, to, date } = req.query;
+
+    if (!from || !to || !date) {
+      return res
+        .status(400)
+        .json({ success: false, error: "All fields are required" });
+    }
+
+    from = from.trim();
+    to = to.trim();
+    date = date.trim();
+
+    const rides = await rideModel.aggregate([
+      {
+        $match: {
+          from: { $regex: `^${from}$`, $options: "i" },
+          to: { $regex: `^${to}$`, $options: "i" },
+          date: date,
+          availableSeats: { $gt: 0 },
+        },
+      },
+    ]);
+
+    return res.status(200).json({ success: true, rides });
+  } catch (error) {
+    console.error("Search error:", error);
+    return res.status(500).json({ success: false, error: "Server error" });
   }
 };
 
