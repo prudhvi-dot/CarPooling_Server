@@ -156,7 +156,7 @@ export const cancelBooking = async (req, res) => {
     const user = await userModel.findOne({ uid });
 
     if (!user) {
-      return req.res(401).json({ success: false, error: "User not found" });
+      return res(401).json({ success: false, error: "User not found" });
     }
 
     const booking = await bookingModel.findById(bookingId);
@@ -329,7 +329,7 @@ export const getBookings = async (req, res) => {
 
     const user = await userModel.findOne({ uid });
 
-    if (!ride) {
+    if (!user) {
       return res.status(401).json({ success: false, error: "User not found" });
     }
 

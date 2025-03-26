@@ -7,6 +7,7 @@ import {
   getRidesByMe,
   offerRide,
   rejectBooking,
+  searchRides,
 } from "../controllers/rideController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 
