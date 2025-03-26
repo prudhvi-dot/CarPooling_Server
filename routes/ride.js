@@ -3,6 +3,7 @@ import {
   acceptBooking,
   bookARide,
   cancelBooking,
+  getBookings,
   getRidesByMe,
   offerRide,
   rejectBooking,
@@ -17,5 +18,6 @@ router.post("/bookARide/:rideId", verifyToken, bookARide);
 router.post("/cancelBooking/:bookingId", verifyToken, cancelBooking);
 router.post("/rejectBooking/:bookingId", verifyToken, rejectBooking);
 router.post("/acceptBooking/:bookingId", verifyToken, acceptBooking);
+router.get("/bookings/:rideId", verifyToken, getBookings);
 
 export default router;

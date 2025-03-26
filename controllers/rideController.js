@@ -281,3 +281,36 @@ export const acceptBooking = async (req, res) => {
     return res.status(500).json({ success: false, error: "Server side error" });
   }
 };
+
+export const getBookings = async (req, res) => {
+  try {
+    const { rideId } = req.params;
+    const { uid } = req.user;
+
+    const ride = await rideModel.findById(rideId);
+
+    if (!ride) {
+      return res.status(404).json({ success: false, error: "Ride not found" });
+    }
+
+    const user = await userModel.findOne({ uid });
+
+    if (!ride) {
+      return res.status(401).json({ success: false, error: "User not found" });
+    }
+
+    console.log(ride.driver);
+    console.log(user._id);
+
+    if (!ride.driver.equals(user._id)) {
+      return res.status(403).json({ success: false, error: "UnAuthorized" });
+    }
+
+    const bookings = await bookingModel.find({ ride: ride._id });
+
+    return res.status(200).json({ success: true, bookings });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error: "Server Side Error" });
+  }
+};
